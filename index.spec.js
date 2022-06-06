@@ -1,19 +1,30 @@
-//import { describe, it, expect } from 'jest';
+import handler from './index';
+import { btoa } from './utils/base64';
 
-import main from './index';
+const buildRequestAndCallHandler = async ( testData ) => {
+    const event = { body: btoa(testData) };
+    const context = {};
+    const handlerResult = await handler(event, context);
+    return handlerResult;
+}
 
 describe("main function", () => {
-    it( "should take valid input and return valid output", () => {
-        //const validHTML = "<html><head><title>things</title></head><body>stuff</body></html>";
-        //stuff
+    it( "should take valid input and return valid output", async () => {
         const validHTML = "<h1>stuff</h1><table><tr><td>cell1</td><td>cell2</td></tr></table>";
         const moreValidHTML = "<h1>stuff</h1><table><tbody><tr><td>cell1</td><td>cell2</td></tr></tbody></table>";
-        
-        expect( main(validHTML) ).toEqual(moreValidHTML);
+
+        const response = await buildRequestAndCallHandler(validHTML);
+        const purifiedValue = JSON.parse(response.body).purified;
+
+        expect( purifiedValue ).toEqual(moreValidHTML);
     } );
-    it( "should take invalid input and return valid output", () => {
+    it( "should take invalid input and return valid output", async () => {
         const invalidHTML = "<h1>stuff";
         const validHTML = "<h1>stuff</h1>";
-        expect( main(invalidHTML) ).toEqual(validHTML);
+
+        const response = await buildRequestAndCallHandler(invalidHTML);
+        const purifiedValue = JSON.parse(response.body).purified;
+
+        expect( purifiedValue ).toEqual(validHTML);
     } );
 });
