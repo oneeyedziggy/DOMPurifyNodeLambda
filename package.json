@@ -5,6 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "docker run ./",
+    "zip": "npm install --production && ./zipForLambda.sh",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
   },
   "repository": {
@@ -27,7 +29,6 @@
   },
   "homepage": "https://github.com/oneeyedziggy/DOMPurifyNodeLambda#readme",
   "dependencies": {
-    "aws-lambda-ric": "^2.0.0",
     "dompurify": "^2.3.8",
     "jsdom": "^19.0.0"
   },

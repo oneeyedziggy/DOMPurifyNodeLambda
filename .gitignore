@@ -65,6 +65,9 @@ typings/
 # Optional REPL history
 .node_repl_history
 
+#output of zipForLambda.sh
+*.zip
+
 # Output of 'npm pack'
 *.tgz
 

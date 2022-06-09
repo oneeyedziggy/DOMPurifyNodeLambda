@@ -1,4 +1,6 @@
 node_modules
+.nvmrc
+*.zip
 .git
 .dockerignore
 Dockerfile

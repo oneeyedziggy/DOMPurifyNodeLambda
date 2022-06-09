@@ -24,8 +24,7 @@ COPY ./* ${FUNCTION_DIR}
 WORKDIR ${FUNCTION_DIR}
 
 # If the dependency is not in package.json uncomment the following line
-# might want to do this b/c all the deps needed inside docker are a lot more than needed by the actual node project
-# RUN npm install aws-lambda-ric
+RUN npm install aws-lambda-ric
 
 RUN npm ci --production
 

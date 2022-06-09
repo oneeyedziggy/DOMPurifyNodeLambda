@@ -40,7 +40,7 @@ const authenticate =  ( event ) => {
     //to prevent accidentally short api keys or empty strings
     const minApiKeyLength = 32;
     const submittedApiKey = event.queryStringParameters.apiKey;
-    return submittedApiKey.length > minApiKeyLength && apiKeys.includes(submittedApiKey);
+    return submittedApiKey.length >= minApiKeyLength && apiKeys.includes(submittedApiKey);
 };
 
 export const handler = async (event, context) => {
