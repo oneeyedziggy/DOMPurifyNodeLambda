@@ -1,8 +1,10 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
 
-import { apiKeys } from './config.json';
+import config from './config.js';
 import { atob } from './utils/base64.js';
+
+const { apiKeys } = config;
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -39,8 +41,8 @@ const buildErrorResponse = async (status, message) => {
 const authenticate =  ( event ) => {
     //to prevent accidentally short api keys or empty strings
     const minApiKeyLength = 32;
-    const submittedApiKey = event.queryStringParameters.apiKey;
-    return submittedApiKey.length >= minApiKeyLength && apiKeys.includes(submittedApiKey);
+    const submittedApiKey = event?.queryStringParameters?.apiKey;
+    return submittedApiKey?.length >= minApiKeyLength && apiKeys?.includes(submittedApiKey);
 };
 
 export const handler = async (event, context) => {
