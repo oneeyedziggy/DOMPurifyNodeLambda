@@ -1,35 +1,59 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
 
-//import {apiKeys} from './config.json';
-import { atob } from './utils/base64';
+import { apiKeys } from './config.json';
+import { atob } from './utils/base64.js';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-const purify = ( input ) => {
+const purify = (input) => {
     return DOMPurify.sanitize(input);
 };
 
-const decodeBody = ( event ) => {
-  return atob(event.body);
+const decodeBody = (event) => {
+    const body = event.isBase64Encoded ? atob(event.body) : event.body;
+    return body;
 };
 
-const buildResponse = ( inputValue, event, context ) => {
-  return {
-    "statusCode": 200,
-    "headers": {
-      "Content-Type": "application/json"
-    }, 
-    //"isBase64Encoded": false,
-    "body": JSON.stringify( { purified: purify(inputValue), event, context } )
-  };
+const buildSuccessResponse = (inputValue, event, context) => {
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        //"isBase64Encoded": false,
+        "body": JSON.stringify({ purified: purify(inputValue), event, context })
+    };
 };
 
-export const handler = async ( event, context ) => {
-  const inputValue = decodeBody( event );
-  const response = buildResponse(inputValue, event, context);
-  return response;
+const sleep = (delay) => new Promise (( resolve) => setTimeout (resolve, delay));
+const buildErrorResponse = async (status, message) => {
+    //to fend off any timing-attachs by adding a random small wait to rejection... between two prime numbers just for fun
+    await sleep( Math.round( ( Math.random() * 503 ) + 101 ) );
+    return {
+        "statusCode": 200,        
+    };
+};
+
+const authenticate =  ( event ) => {
+    //to prevent accidentally short api keys or empty strings
+    const minApiKeyLength = 32;
+    const submittedApiKey = event.queryStringParameters.apiKey;
+    return submittedApiKey.length > minApiKeyLength && apiKeys.includes(submittedApiKey);
+};
+
+export const handler = async (event, context) => {
+    let response;
+    if (authenticate(event)) {
+        const inputValue = decodeBody(event);
+        response = buildSuccessResponse(inputValue, event, context);
+    } else {
+        const msg = "message without or w/ invalid API key received";
+        console.warn(msg);
+        response = await buildErrorResponse( 401, msg );
+    }
+    return response;
 };
 
 export default handler;

@@ -27,8 +27,11 @@
   },
   "homepage": "https://github.com/oneeyedziggy/DOMPurifyNodeLambda#readme",
   "dependencies": {
+    "aws-lambda-ric": "^2.0.0",
     "dompurify": "^2.3.8",
-    "jest": "^28.1.0",
     "jsdom": "^19.0.0"
+  },
+  "devDependencies": {
+    "jest": "^28.1.0"
   }
 }
