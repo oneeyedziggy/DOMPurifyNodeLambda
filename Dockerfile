@@ -8,12 +8,19 @@ ARG FUNCTION_DIR
 
 # Install aws-lambda-cpp build dependencies
 RUN apk update && \
-    apk add -y \
+    apk add \
+#    gyp \
+    python3 \
+    nghttp2-dev \
+    libexecinfo-dev \
+#    libexecinfo
+    gcompat \
     g++ \
     make \
     cmake \
     unzip \
-    curl-devel \  
+    curl-dev \
+    libtool \  
     autoconf \
     automake
 
@@ -24,9 +31,9 @@ COPY ./* ${FUNCTION_DIR}
 WORKDIR ${FUNCTION_DIR}
 
 # If the dependency is not in package.json uncomment the following line
-RUN npm install aws-lambda-ric
+RUN npm install aws-lambda-ric 
 
-RUN npm ci --production
+RUN npm ci --omit=dev 
 
 # Grab a fresh slim copy of the image to reduce the final size
 FROM node:16.15-alpine
@@ -40,5 +47,15 @@ WORKDIR ${FUNCTION_DIR}
 # Copy in the built dependencies
 COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 
-ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
-CMD ["app.handler"]
+# Downloads the Lambda Runtime Interface Emulator (RIE)
+ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
+
+RUN chmod +x /usr/bin/aws-lambda-rie
+#RUN chmod +x /function/entry.sh
+
+EXPOSE 8080
+
+#ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
+ENTRYPOINT ["/function/entry.sh"]
+
+CMD ["index.handler"]

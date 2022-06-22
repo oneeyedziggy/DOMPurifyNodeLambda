@@ -24,7 +24,6 @@ const buildSuccessResponse = (inputValue, event, context) => {
         "headers": {
             "Content-Type": "application/json"
         },
-        //"isBase64Encoded": false,
         "body": JSON.stringify({ purified: purify(inputValue), event, context })
     };
 };

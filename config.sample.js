@@ -1,5 +1,5 @@
 const config = {
-    "apiKeys": []
+    "apiKeys": ["TestOnly012345678910111213141516"]
 }
 
 export default config;

@@ -5,5 +5,6 @@ node_modules
 .dockerignore
 Dockerfile
 *.spec.js
-config.js
+#config.js re enable this when done testing
 README.md
+zipForLambda.sh
